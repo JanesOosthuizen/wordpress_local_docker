@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  wordpress:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      # - ./:/var/www/html/ #unherd_wordpress repository
+      # - ./wp-config.php:/var/www/html/wp-config.php
+    command: 
+      bash -c "chown -R www-data:www-data /var/www/html/wp-content/uploads && docker-entrypoint.sh apache2-foreground"
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress_wp_user
+      WORDPRESS_DB_PASSWORD: wordpress_wp_db_p455w0rd
+      WORDPRESS_DB_NAME: wordpress_wp_db
+    networks:
+      - wp-network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress_wp_db_r00t_p455w0rd
+      MYSQL_DATABASE: wordpress_wp_db
+      MYSQL_USER: wordpress_wp_user
+      MYSQL_PASSWORD: wordpress_wp_db_p455w0rd
+    networks:
+      - wp-network
+
+volumes:
+  db_data:
+
+networks:
+  wp-network:
+    driver: bridge

@@ -1,0 +1,5 @@
+.DS_Store
+unherd_media/*
+!unherd_media/.gitkeep
+db/*
+!db/.gitkeep
